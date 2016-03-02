@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,8 +27,9 @@ namespace Microsoft.AspNetCore.StaticFiles
         /// </summary>
         /// <param name="next">The next middleware in the pipeline.</param>
         /// <param name="hostingEnv">The <see cref="IHostingEnvironment"/> used by this middleware.</param>
+        /// <param name="encoder">The <see cref="HtmlEncoder"/> used by the default <see cref="HtmlDirectoryFormatter"/>.</param>
         /// <param name="options">The configuration for this middleware.</param>
-        public DirectoryBrowserMiddleware(RequestDelegate next, IHostingEnvironment hostingEnv, IOptions<DirectoryBrowserOptions> options)
+        public DirectoryBrowserMiddleware(RequestDelegate next, IHostingEnvironment hostingEnv, HtmlEncoder encoder, IOptions<DirectoryBrowserOptions> options)
         {
             if (next == null)
             {
@@ -39,6 +41,11 @@ namespace Microsoft.AspNetCore.StaticFiles
                 throw new ArgumentNullException(nameof(hostingEnv));
             }
 
+            if (encoder == null)
+            {
+                throw new ArgumentNullException(nameof(encoder));
+            }
+
             if (options == null)
             {
                 throw new ArgumentNullException(nameof(options));
@@ -46,7 +53,7 @@ namespace Microsoft.AspNetCore.StaticFiles
 
             if (options.Value.Formatter == null)
             {
-                throw new ArgumentException(Resources.Args_NoFormatter);
+                options.Value.Formatter = new HtmlDirectoryFormatter(encoder);
             }
 
             _next = next;

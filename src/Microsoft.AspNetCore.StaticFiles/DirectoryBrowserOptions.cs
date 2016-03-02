@@ -26,7 +26,6 @@ namespace Microsoft.AspNetCore.Builder
         public DirectoryBrowserOptions(SharedOptions sharedOptions)
             : base(sharedOptions)
         {
-            Formatter = new HtmlDirectoryFormatter();
         }
 
         /// <summary>
