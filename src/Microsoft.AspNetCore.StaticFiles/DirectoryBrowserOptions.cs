@@ -9,7 +9,7 @@ namespace Microsoft.AspNetCore.Builder
     /// <summary>
     /// Directory browsing options
     /// </summary>
-    public class DirectoryBrowserOptions : SharedOptionsBase<DirectoryBrowserOptions>
+    public class DirectoryBrowserOptions : SharedOptionsBase
     {
         /// <summary>
         /// Enabled directory browsing for all request paths

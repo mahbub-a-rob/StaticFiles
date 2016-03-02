@@ -27,6 +27,7 @@ namespace Microsoft.AspNetCore.StaticFiles
         private readonly HttpRequest _request;
         private readonly HttpResponse _response;
         private readonly ILogger _logger;
+        private readonly IFileProvider _fileProvider;
         private string _method;
         private bool _isGet;
         private bool _isHead;
@@ -47,7 +48,7 @@ namespace Microsoft.AspNetCore.StaticFiles
 
         private IList<RangeItemHeaderValue> _ranges;
 
-        public StaticFileContext(HttpContext context, StaticFileOptions options, PathString matchUrl, ILogger logger)
+        public StaticFileContext(HttpContext context, StaticFileOptions options, PathString matchUrl, ILogger logger, IFileProvider fileProvider)
         {
             _context = context;
             _options = options;
@@ -57,6 +58,7 @@ namespace Microsoft.AspNetCore.StaticFiles
             _logger = logger;
             _requestHeaders = _request.GetTypedHeaders();
             _responseHeaders = _response.GetTypedHeaders();
+            _fileProvider = fileProvider;
 
             _method = null;
             _isGet = false;
@@ -134,7 +136,7 @@ namespace Microsoft.AspNetCore.StaticFiles
 
         public bool LookupFileInfo()
         {
-            _fileInfo = _options.FileProvider.GetFileInfo(_subPath.Value);
+            _fileInfo = _fileProvider.GetFileInfo(_subPath.Value);
             if (_fileInfo.Exists)
             {
                 _length = _fileInfo.Length;

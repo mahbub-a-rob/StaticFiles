@@ -21,6 +21,8 @@ namespace Microsoft.AspNetCore.StaticFiles
         private readonly DirectoryBrowserOptions _options;
         private readonly PathString _matchUrl;
         private readonly RequestDelegate _next;
+        private readonly IDirectoryFormatter _formatter;
+        private readonly IFileProvider _fileProvider;
 
         /// <summary>
         /// Creates a new instance of the SendFileMiddleware.
@@ -51,14 +53,10 @@ namespace Microsoft.AspNetCore.StaticFiles
                 throw new ArgumentNullException(nameof(options));
             }
 
-            if (options.Value.Formatter == null)
-            {
-                options.Value.Formatter = new HtmlDirectoryFormatter(encoder);
-            }
-
             _next = next;
             _options = options.Value;
-            _options.ResolveFileProvider(hostingEnv);
+            _fileProvider = _options.FileProvider ?? Helpers.ResolveFileProvider(hostingEnv);
+            _formatter = options.Value.Formatter ?? new HtmlDirectoryFormatter(encoder);
             _matchUrl = _options.RequestPath;
         }
 
@@ -85,7 +83,7 @@ namespace Microsoft.AspNetCore.StaticFiles
                     return Constants.CompletedTask;
                 }
 
-                return _options.Formatter.GenerateContentAsync(context, contents);
+                return _formatter.GenerateContentAsync(context, contents);
             }
 
             return _next(context);
@@ -93,7 +91,7 @@ namespace Microsoft.AspNetCore.StaticFiles
 
         private bool TryGetDirectoryInfo(PathString subpath, out IDirectoryContents contents)
         {
-            contents = _options.FileProvider.GetDirectoryContents(subpath.Value);
+            contents = _fileProvider.GetDirectoryContents(subpath.Value);
             return contents.Exists;
         }
     }

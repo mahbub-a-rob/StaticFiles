@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -21,6 +22,7 @@ namespace Microsoft.AspNetCore.StaticFiles
         private readonly PathString _matchUrl;
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
+        private readonly IFileProvider _fileProvider;
 
         /// <summary>
         /// Creates a new instance of the StaticFileMiddleware.
@@ -58,7 +60,7 @@ namespace Microsoft.AspNetCore.StaticFiles
 
             _next = next;
             _options = options.Value;
-            _options.ResolveFileProvider(hostingEnv);
+            _fileProvider = _options.FileProvider ?? Helpers.ResolveFileProvider(hostingEnv);
             _matchUrl = _options.RequestPath;
             _logger = loggerFactory.CreateLogger<StaticFileMiddleware>();
         }
@@ -70,7 +72,7 @@ namespace Microsoft.AspNetCore.StaticFiles
         /// <returns></returns>
         public Task Invoke(HttpContext context)
         {
-            var fileContext = new StaticFileContext(context, _options, _matchUrl, _logger);
+            var fileContext = new StaticFileContext(context, _options, _matchUrl, _logger, _fileProvider);
           
             if (!fileContext.ValidateMethod())
             {
