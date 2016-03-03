@@ -25,8 +25,6 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="sharedOptions"></param>
         public StaticFileOptions(SharedOptions sharedOptions) : base(sharedOptions)
         {
-            ContentTypeProvider = new FileExtensionContentTypeProvider();
-
             OnPrepareResponse = _ => { };
         }
 
