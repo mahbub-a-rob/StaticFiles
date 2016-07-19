@@ -341,7 +341,7 @@ namespace Microsoft.AspNetCore.StaticFiles
             return Constants.CompletedTask;
         }
 
-        public async Task SendAsync()
+        public Task SendAsync()
         {
             ApplyResponseHeaders(Constants.Status200Ok);
 
@@ -349,14 +349,13 @@ namespace Microsoft.AspNetCore.StaticFiles
             var sendFile = _context.Features.Get<IHttpSendFileFeature>();
             if (sendFile != null && !string.IsNullOrEmpty(physicalPath))
             {
-                await sendFile.SendFileAsync(physicalPath, 0, _length, _context.RequestAborted);
-                return;
+                return sendFile.SendFileAsync(physicalPath, 0, _length, _context.RequestAborted);
             }
 
             Stream readStream = _fileInfo.CreateReadStream();
             try
             {
-                await StreamCopyOperation.CopyToAsync(readStream, _response.Body, _length, _context.RequestAborted);
+                return StreamCopyOperation.CopyToAsync(readStream, _response.Body, _length, _context.RequestAborted);
             }
             finally
             {
