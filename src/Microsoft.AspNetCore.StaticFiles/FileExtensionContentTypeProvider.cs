@@ -455,5 +455,38 @@ namespace Microsoft.AspNetCore.StaticFiles
 
             return path.Substring(index);
         }
+
+        /// <summary>
+        /// Add or overwrite a map between file extension and MIME type.
+        /// </summary>
+        /// <param name="extension"></param>
+        /// <param name="mimeType"></param>
+        /// <returns></returns>
+        public FileExtensionContentTypeProvider SetFileType(string extension, string mimeType)
+        {
+            Mappings[extension] = mimeType;
+            return this;
+        }
+
+        /// <summary>
+        /// Remove a file extension from the list.
+        /// </summary>
+        /// <param name="extension"></param>
+        /// <returns></returns>
+        public FileExtensionContentTypeProvider RemoveFileType(string extension)
+        {
+            Mappings.Remove(extension);
+            return this;
+        }
+
+        /// <summary>
+        /// Clear all file extensions from the list.
+        /// </summary>
+        /// <returns></returns>
+        public FileExtensionContentTypeProvider Clear()
+        {
+            Mappings.Clear();
+            return this;
+        }
     }
 }

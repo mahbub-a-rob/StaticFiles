@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.StaticFiles.Infrastructure;
 
 namespace Microsoft.AspNetCore.Builder
@@ -46,5 +47,15 @@ namespace Microsoft.AspNetCore.Builder
         /// Default files are enabled by default.
         /// </summary>
         public bool EnableDefaultFiles { get; set; }
+
+        // Directly exposed so it can be assigned via the constructor initializer syntax.
+        /// <summary>
+        /// Used to map files to content-types.
+        /// </summary>
+        public IContentTypeProvider ContentTypeProvider
+        {
+            get { return StaticFileOptions.ContentTypeProvider; }
+            set { StaticFileOptions.ContentTypeProvider = value; }
+        }
     }
 }
